@@ -52,13 +52,19 @@ graph TB
         T1[WebSearch\ncurrent data]
         T2[context7\nlibrary docs]
         T3[markitdown-mcp\nPDF · Word · Excel]
-        T4[Gmail · Drive\nCalendar · GitHub]
+        T4[Gmail · Calendar\nGitHub]
+    end
+
+    subgraph Storage ["Persistent Storage"]
+        Vault[(Obsidian Vault\nknowledge · decisions · career)]
+        GDrive[(Google Drive\norganized folders\nreports · docs · PDFs)]
+        Vault -.->|indexed via| DocHub["05 Documents/\nvault index"]
     end
 
     Director --> WLib
     Director --> SLib
     WLib --> Tools
-    WLib --> Vault[(Obsidian Vault\nknowledge · decisions · career)]
+    WLib --> Storage
 ```
 
 ---
@@ -108,7 +114,11 @@ flowchart TD
 
     QA["QA Reviewer WRK-001\nskill: verification-before-completion\nchecks every deliverable"]
     QA --> Presenter["Client Presenter WRK-003\nadapts output to audience level"]
-    Presenter --> Out([Artifact + Vault Update\n+ Decision Log])
+
+    Presenter --> Artifact([Artifact\ndelivered to user])
+    Presenter --> GDriveSave[(Google Drive\norganized folders\nPDF · Word · Excel)]
+    Presenter --> VaultSave[(Vault Update\nknowledge · decisions\ncareer logs)]
+    GDriveSave -.->|indexed in| Index["05 Documents/\nvault index"]
 ```
 
 ---
