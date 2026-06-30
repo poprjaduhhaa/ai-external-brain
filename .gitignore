@@ -1,0 +1,16 @@
+# Obsidian
+.obsidian/
+.obsidian-workspace/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Personal data (never commit)
+01 Me/Profile.md
+01 Me/Career.md
+
+# Temp
+*.tmp
+*.log
