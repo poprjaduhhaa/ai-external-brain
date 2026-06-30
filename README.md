@@ -28,38 +28,87 @@ New workers are screened by an internal HR agent before entering the library —
 
 ---
 
-## How it works
+## System Architecture
+
+Three libraries power everything. The Director orchestrates — workers pull their skills and tools on demand.
+
+```mermaid
+graph TB
+    Director([Director\nOrchestrator])
+
+    subgraph WLib ["Workers Library — 19 specialists"]
+        Core["Core team: QA · PM · Presenter"]
+        Domain["Domain: Finance · Research · Career\nEngineering · Strategy · Security · Marketing"]
+    end
+
+    subgraph SLib ["Skills Library — 242 skills"]
+        SP["Superpowers: systematic-debugging\nwriting-plans · test-driven-development\nverification-before-completion · dispatching-parallel-agents"]
+        CS["C-Suite: cfo-review · cmo-review · cto-review\ngc-review · cpo-review · coo-advisor · cross-eval"]
+        RS["Research: pulse · dossier · market-research\ncompetitive-intel · litreview · competitive-teardown"]
+        CA["Career: tailored-resume-generator\ncold-email · interview-system-designer"]
+    end
+
+    subgraph Tools ["MCP Tools — live data, no hallucinations"]
+        T1[WebSearch\ncurrent data]
+        T2[context7\nlibrary docs]
+        T3[markitdown-mcp\nPDF · Word · Excel]
+        T4[Gmail · Drive\nCalendar · GitHub]
+    end
+
+    Director --> WLib
+    Director --> SLib
+    WLib --> Tools
+    WLib --> Vault[(Obsidian Vault\nknowledge · decisions · career)]
+```
+
+---
+
+## Request Flow
+
+Every worker carries their own assigned skill set. Skills define HOW they work — tools define WHERE they get data.
 
 ```mermaid
 flowchart TD
-    Input([User Input]) --> Router{What type?}
+    Input([User Input]) --> Director
 
-    Router -->|idea / decision| Council[council\nphilosophical filter]
-    Router -->|research request| RA[Research Agent\nWRK-010]
-    Router -->|career / CV / interview| CS[Career Specialist\nWRK-012]
-    Router -->|file attached| Doc[markitdown-mcp\nextract → classify → save]
-    Router -->|knowledge / learning| KB[Knowledge Note\n03 Knowledge/]
+    Director[Director\nreads Workers Library\npicks team for this task] --> Router{What kind\nof input?}
 
-    Council -->|approved| Pipeline[C-Suite Pipeline]
-    Council -->|needs work| Council
-    Council -->|rejected| Archive[Archive + reason]
+    Router -->|idea or\nbig decision| Council
 
-    Pipeline --> P1[CFO review]
-    Pipeline --> P2[CMO review]
-    Pipeline --> P3[CTO review]
-    Pipeline --> P4[COO advisor]
-    Pipeline --> P5[GC review]
-    Pipeline --> P6[CPO review]
+    subgraph IdeaFlow ["Idea Pipeline"]
+        Council["council skill\nphilosophical filter"]
+        Council -->|iterate max 3x| Council
+        Council -->|hard no| Archive[(Archive\n+ reason)]
+        Council -->|approved| CSuite
 
-    P1 & P2 & P3 & P4 & P5 & P6 --> Stakes{High stakes?}
-    Stakes -->|yes| Cross[cross-eval\nmulti-model consensus]
-    Stakes -->|no| Out[Artifact + Decision Log]
-    Cross --> Out
+        subgraph CSuite ["C-Suite — 6 parallel agents, each with their own skill"]
+            CFO["CFO — cfo-review"]
+            CMO["CMO — cmo-review"]
+            CTO["CTO — cto-review"]
+            COO["COO — coo-advisor"]
+            GC["GC — gc-review"]
+            CPO["CPO — cpo-review"]
+        end
 
-    RA --> Out
-    CS --> Career[Career.md update\n+ deliverable]
-    Doc --> Out
-    KB --> Out
+        CSuite --> Stakes{High stakes?\n> 6 months or capital}
+        Stakes -->|yes| Cross["cross-eval skill\nmulti-model consensus"]
+        Stakes -->|no| QA
+        Cross --> QA
+    end
+
+    Router -->|research| RA["Research Agent WRK-010\nskills: dispatching-parallel-agents\ntools: WebSearch · context7 · markitdown"]
+    Router -->|career / CV / interview| CS["Career Specialist WRK-012\nskills: verification-before-completion\ntools: WebSearch"]
+    Router -->|file attached| Doc["markitdown-mcp\nextract → classify → route to hub"]
+    Router -->|knowledge /\nlearning| KB["Knowledge Note\n03 Knowledge/"]
+
+    RA --> QA
+    CS --> QA
+    Doc --> QA
+    KB --> QA
+
+    QA["QA Reviewer WRK-001\nskill: verification-before-completion\nchecks every deliverable"]
+    QA --> Presenter["Client Presenter WRK-003\nadapts output to audience level"]
+    Presenter --> Out([Artifact + Vault Update\n+ Decision Log])
 ```
 
 ---
@@ -68,38 +117,40 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    Gap[Director identifies\na skill gap] --> Draft[Drafts worker spec\nProcess + QG + Protocol]
-    Draft --> HR[HR Agent\nWRK-004]
-    HR -->|missing Process\nor vague QG| Draft
-    HR -->|approved| Confirm[User confirms]
-    Confirm --> Library[Added to\nworkers library]
+    Gap[Director spots\na skill gap] --> Draft["Drafts spec:\nProcess · Quality Gates\nUncertainty Protocol\ntools + skills assigned"]
+    Draft --> HR["HR Agent WRK-004\ninternal screener"]
+    HR -->|vague methodology\nmissing QG or protocol| Draft
+    HR -->|approved| User[User confirms]
+    User --> Library[(Workers Library\nnext ID assigned)]
 ```
 
 ---
 
 ## The team
 
-| ID | Worker | Domain | Always in team |
-|----|--------|--------|:--------------:|
-| WRK-001 | QA Reviewer | Quality control | Yes |
-| WRK-002 | Project Manager | Scope, timeline, client expectations | Yes |
-| WRK-003 | Client Presenter | Output adapted to audience level | Yes |
-| WRK-004 | HR Agent | Screens new workers before library entry | — |
-| WRK-005 | Financial Modeler | DCF, scenario analysis, Excel models | — |
-| WRK-006 | Data Analyst | Insights, visualization, patterns | — |
-| WRK-009 | Broker | Investment instruments, deal structuring | — |
-| WRK-010 | Research Agent | Due diligence, source synthesis, fact-checking | — |
-| WRK-011 | Strategy Consultant | OKR, scenario planning, competitive strategy | — |
-| WRK-012 | Career Specialist | CV/CL DE+EN, ATS, interview prep, DACH market | — |
-| WRK-013 | Software Engineer | Architecture, backend, system design | — |
-| WRK-014 | Debugger | Root cause analysis, error tracing | — |
-| WRK-015 | Tester | Test strategy, edge cases | — |
-| WRK-016 | Marketer | Positioning, growth, content channels | — |
-| WRK-017 | Web Developer | Frontend, React/Next.js, deployment | — |
-| WRK-018 | Treasury Expert | Cash management, FX, working capital | — |
-| WRK-019 | Cybersecurity Expert | Pentest, AI security, prompt injection | — |
-| WRK-007 | Copywriter (Deutsch) | Professional German text, DACH market | — |
-| WRK-008 | Beverage Expert | Bar menus, F&B concepts | — |
+Each worker ships with a defined methodology, quality gates they cannot bypass, and a personal skill + tool set.
+
+| ID | Worker | Skills | Tools |
+|----|--------|--------|-------|
+| WRK-001 | QA Reviewer | verification-before-completion | markitdown-mcp |
+| WRK-002 | Project Manager | verification-before-completion | Gmail · Calendar |
+| WRK-003 | Client Presenter | verification-before-completion | Drive · markitdown |
+| WRK-004 | HR Agent | verification-before-completion | WebSearch |
+| WRK-005 | Financial Modeler | verification-before-completion | markitdown · context7 |
+| WRK-006 | Data Analyst | verification-before-completion | WebSearch · context7 · markitdown |
+| WRK-007 | Copywriter (Deutsch) | verification-before-completion | context7 |
+| WRK-008 | Beverage Expert | verification-before-completion | WebSearch |
+| WRK-009 | Broker | verification-before-completion | WebSearch · context7 |
+| WRK-010 | Research Agent | dispatching-parallel-agents · verification | WebSearch · context7 · markitdown |
+| WRK-011 | Strategy Consultant | brainstorming · verification | WebSearch · context7 |
+| WRK-012 | Career Specialist | verification-before-completion | WebSearch |
+| WRK-013 | Software Engineer | writing-plans · systematic-debugging · TDD · code-review | context7 · WebSearch |
+| WRK-014 | Debugger | systematic-debugging · verification | context7 · WebSearch |
+| WRK-015 | Tester | test-driven-development · verification | context7 · WebSearch |
+| WRK-016 | Marketer | brainstorming · verification | WebSearch · context7 |
+| WRK-017 | Web Developer | writing-plans · TDD · code-review | context7 · WebSearch |
+| WRK-018 | Treasury Expert | verification-before-completion | WebSearch · context7 |
+| WRK-019 | Cybersecurity Expert | systematic-debugging · verification | WebSearch · context7 |
 
 ---
 
