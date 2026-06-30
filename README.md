@@ -11,7 +11,7 @@
 
 ## Why I Built This
 
-Managing job applications, university coursework (M.Sc. Business Analytics, Uni Siegen), and knowledge acquisition simultaneously — while dealing with ADHD — requires a system that thinks for you, not one you have to maintain manually.
+In an era where information moves faster than any individual can process it, the competitive edge belongs to those who connect the right dots at the right time — not those who work the hardest. Managing job applications, university coursework (M.Sc. Business Analytics, Uni Siegen), and continuous learning simultaneously demands a system that thinks alongside you, not one you have to maintain manually.
 
 Most productivity systems fail because they add cognitive overhead instead of removing it. I wanted the opposite: an external brain that:
 - Starts each session already knowing where I left off
